@@ -391,7 +391,7 @@
 
                 // Load JSON schedule dynamically
         async function loadSchedule() {
-          const res = await fetch('./schedule.json');
+          const res = await fetch('./gameday/schedule.json');
           const data = await res.json();
           const table = document.getElementById('scheduleTable');
           table.innerHTML = ''; // Clear old rows
