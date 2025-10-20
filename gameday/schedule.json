@@ -1,0 +1,84 @@
+{
+  "matches": [
+    {
+      "home": {
+        "name": "Π.Α.Ο.Κ.",
+        "subtitle": " ",
+        "logo": "logos/paok.png"
+      },
+      "away": {
+        "name": "Α.Ο. ΦΟΙΝΙΚΑΣ",
+        "subtitle": "ΣΥΡΟΥ",
+        "logo": "logos/foinikas.png"
+      },
+      "time": "19:00",
+      "date": "24/10",
+      "court": "PAOK SPORTS ARENA",
+      "channel": "ΕΡΤ"
+    },
+    {
+      "home": {
+        "name": "ΠΑΝΑΘΗΝΑΙΚΟΣ",
+        "subtitle": "Α.Ο.",
+        "logo": "logos/panathinaikos.png"
+      },
+      "away": {
+        "name": "Α.Ο. ΦΛΟΙΣΒΟΣ",
+        "subtitle": "MEMBERS PARON",
+        "logo": "logos/floisvos.png"
+      },
+      "time": "20:30",
+      "date": "25/10",
+      "court": "ΜΕΤΣ",
+      "channel": "ΕΡΤ"
+    },
+    {
+      "home": {
+        "name": "ΜΙΛΩΝ",
+        "subtitle": "Α.Ο.Ν.Σ.",
+        "logo": "logos/milon.png"
+      },
+      "away": {
+        "name": "Α.Ο. ΚΑΛΑΜΑΤΑ",
+        "subtitle": "AFFIDEA",
+        "logo": "logos/kalamata.png"
+      },
+      "time": "18:30",
+      "date": "26/10",
+      "court": "Κ. ΠΕΡΣΗΣ",
+      "channel": "ΕΣΑΠ TV"
+    },
+    {
+      "home": {
+        "name": "ΠΑΝΙΩΝΙΟΣ",
+        "subtitle": " ",
+        "logo": "logos/panionios.png"
+      },
+      "away": {
+        "name": "ΟΛΥΜΠΙΑΚΟΣ ",
+        "subtitle": "Σ.Φ.Π. ΟΝΕΧ",
+        "logo": "logos/olympiakos.png"
+      },
+      "time": "19:45",
+      "date": "26/10",
+      "court": "Α. ΒΑΡΙΚΑΣ",
+      "channel": "ΕΣΑΠ TV"
+    },
+    {
+      "home": {
+        "name": "Ο.Φ.Η.",
+        "subtitle": " ",
+        "logo": "logos/ofi.png"
+      },
+      "away": {
+        "name": "ΚΗΦΙΣΙΑ",
+        "subtitle": "Α.Ο.Π.",
+        "logo": "logos/kifisia.png"
+      },
+      "time": "17:00",
+      "date": "12/11",
+      "court": "ΒΑΚ",
+      "channel": "ΕΣΑΠ TV"
+    }
+  ]
+}
