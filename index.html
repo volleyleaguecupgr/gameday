@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Πίνακας Ελέγχου - Gameday Admin</title>
+  <style>
+    body {
+      font-family: Inter, sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      padding: 20px;
+    }
+    h1 { text-align: center; color: #60a5fa; }
+    .match { background: #1e293b; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
+    input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: none; }
+    button { padding: 10px 20px; border: none; border-radius: 5px; background: #3b82f6; color: white; font-weight: 700; cursor: pointer; }
+    button:hover { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <h1>Πίνακας Ελέγχου Προγράμματος Αγωνιστικής</h1>
+
+  <div id="matches"></div>
+
+  <button onclick="saveJSON()">💾 Αποθήκευση Schedule JSON</button>
+
+  <script>
+    const matchesContainer = document.getElementById('matches');
+
+    function createMatchForm(index) {
+      return `
+      <div class="match">
+        <h3>Αγώνας ${index + 1}</h3>
+        <label>Home Team Name</label>
+        <input id="homeName${index}" placeholder="ΜΙΛΩΝ" />
+        <label>Home Subtitle</label>
+        <input id="homeSubtitle${index}" placeholder="Α.Ο.Ν.Σ." />
+        <label>Home Logo URL</label>
+        <input id="homeLogo${index}" placeholder="logos/milon.png" />
+        <label>Away Team Name</label>
+        <input id="awayName${index}" placeholder="ΚΑΛΑΜΑΤΑ" />
+        <label>Away Subtitle</label>
+        <input id="awaySubtitle${index}" placeholder="Α.Ο. 80" />
+        <label>Away Logo URL</label>
+        <input id="awayLogo${index}" placeholder="logos/kalamata.png" />
+        <label>Time</label>
+        <input id="time${index}" placeholder="18:00" />
+        <label>Date</label>
+        <input id="date${index}" placeholder="25 Οκτ" />
+        <label>Court</label>
+        <input id="court${index}" placeholder="ΚΡΟΙΣΟΣ ΠΕΡΣΗΣ" />
+        <label>Channel</label>
+        <input id="channel${index}" placeholder="ERT Sports" />
+      </div>`;
+    }
+
+    // Render 5 match forms
+    for (let i = 0; i < 5; i++) {
+      matchesContainer.innerHTML += createMatchForm(i);
+    }
+
+    function saveJSON() {
+      const matches = [];
+      for (let i = 0; i < 5; i++) {
+        matches.push({
+          home: {
+            name: document.getElementById(`homeName${i}`).value,
+            subtitle: document.getElementById(`homeSubtitle${i}`).value,
+            logo: document.getElementById(`homeLogo${i}`).value
+          },
+          away: {
+            name: document.getElementById(`awayName${i}`).value,
+            subtitle: document.getElementById(`awaySubtitle${i}`).value,
+            logo: document.getElementById(`awayLogo${i}`).value
+          },
+          time: document.getElementById(`time${i}`).value,
+          date: document.getElementById(`date${i}`).value,
+          court: document.getElementById(`court${i}`).value,
+          channel: document.getElementById(`channel${i}`).value
+        });
+      }
+
+      const data = { matches };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "schedule.json";
+      a.click();
+    }
+  </script>
+</body>
+</html>
