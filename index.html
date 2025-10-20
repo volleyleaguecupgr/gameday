@@ -13,17 +13,40 @@
     }
     h1 { text-align: center; color: #60a5fa; }
     .match { background: #1e293b; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-    input { width: 100%; padding: 8px; margin: 5px 0; border-radius: 5px; border: none; }
-    button { padding: 10px 20px; border: none; border-radius: 5px; background: #3b82f6; color: white; font-weight: 700; cursor: pointer; }
+    input, textarea {
+      width: 100%; padding: 8px; margin: 5px 0;
+      border-radius: 5px; border: none;
+    }
+    button {
+      padding: 10px 20px;
+      border: none; border-radius: 5px;
+      background: #3b82f6; color: white;
+      font-weight: 700; cursor: pointer;
+    }
     button:hover { background: #2563eb; }
+    .token-section {
+      background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 20px;
+    }
   </style>
 </head>
 <body>
   <h1>Πίνακας Ελέγχου Προγράμματος Αγωνιστικής</h1>
 
+  <div class="token-section">
+    <h3>GitHub Settings</h3>
+    <label>GitHub Username</label>
+    <input id="username" placeholder="your-github-username" />
+    <label>Repository Name</label>
+    <input id="repo" placeholder="your-repo-name" />
+    <label>Branch (default: main)</label>
+    <input id="branch" placeholder="main" value="main" />
+    <label>Personal Access Token</label>
+    <input id="token" type="password" placeholder="Paste your GitHub token here" />
+  </div>
+
   <div id="matches"></div>
 
-  <button onclick="saveJSON()">💾 Αποθήκευση Schedule JSON</button>
+  <button onclick="uploadToGitHub()">💾 Αποθήκευση & Ανέβασμα στο GitHub</button>
 
   <script>
     const matchesContainer = document.getElementById('matches');
@@ -60,7 +83,18 @@
       matchesContainer.innerHTML += createMatchForm(i);
     }
 
-    function saveJSON() {
+    async function uploadToGitHub() {
+      const username = document.getElementById("username").value;
+      const repo = document.getElementById("repo").value;
+      const branch = document.getElementById("branch").value || "main";
+      const token = document.getElementById("token").value;
+
+      if (!username || !repo || !token) {
+        alert("⚠️ Please fill in your GitHub details and token.");
+        return;
+      }
+
+      // Gather data
       const matches = [];
       for (let i = 0; i < 5; i++) {
         matches.push({
@@ -82,11 +116,45 @@
       }
 
       const data = { matches };
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = "schedule.json";
-      a.click();
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
+
+      const path = "gameday/schedule.json";
+      const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
+
+      // Get the existing file SHA (required for updates)
+      let sha = null;
+      try {
+        const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${token}` }});
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+      } catch (e) {
+        console.warn("No existing file found, creating new one.");
+      }
+
+      // Upload new file
+      const res = await fetch(apiUrl, {
+        method: "PUT",
+        headers: {
+          "Authorization": `token ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: "Update schedule.json",
+          content: content,
+          sha: sha,
+          branch: branch
+        })
+      });
+
+      if (res.ok) {
+        alert("✅ Schedule updated successfully on GitHub!");
+      } else {
+        const err = await res.json();
+        alert("❌ Upload failed: " + err.message);
+        console.error(err);
+      }
     }
   </script>
 </body>
