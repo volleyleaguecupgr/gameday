@@ -1,161 +1,128 @@
 <!DOCTYPE html>
-<html lang="el">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Πίνακας Ελέγχου - Gameday Admin</title>
-  <style>
-    body {
-      font-family: Inter, sans-serif;
-      background: #0f172a;
-      color: #f1f5f9;
-      padding: 20px;
-    }
-    h1 { text-align: center; color: #60a5fa; }
-    .match { background: #1e293b; border-radius: 10px; padding: 15px; margin-bottom: 15px; }
-    input, textarea {
-      width: 100%; padding: 8px; margin: 5px 0;
-      border-radius: 5px; border: none;
-    }
-    button {
-      padding: 10px 20px;
-      border: none; border-radius: 5px;
-      background: #3b82f6; color: white;
-      font-weight: 700; cursor: pointer;
-    }
-    button:hover { background: #2563eb; }
-    .token-section {
-      background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 20px;
-    }
-  </style>
-</head>
-<body>
-  <h1>Πίνακας Ελέγχου Προγράμματος Αγωνιστικής</h1>
-
-  <div class="token-section">
-    <h3>GitHub Settings</h3>
-    <label>GitHub Username</label>
-    <input id="username" placeholder="your-github-username" />
-    <label>Repository Name</label>
-    <input id="repo" placeholder="your-repo-name" />
-    <label>Branch (default: main)</label>
-    <input id="branch" placeholder="main" value="main" />
-    <label>Personal Access Token</label>
-    <input id="token" type="password" placeholder="Paste your GitHub token here" />
-  </div>
-
-  <div id="matches"></div>
-
-  <button onclick="uploadToGitHub()">💾 Αποθήκευση & Ανέβασμα στο GitHub</button>
-
-  <script>
-    const matchesContainer = document.getElementById('matches');
-
-    function createMatchForm(index) {
-      return `
-      <div class="match">
-        <h3>Αγώνας ${index + 1}</h3>
-        <label>Home Team Name</label>
-        <input id="homeName${index}" placeholder="ΜΙΛΩΝ" />
-        <label>Home Subtitle</label>
-        <input id="homeSubtitle${index}" placeholder="Α.Ο.Ν.Σ." />
-        <label>Home Logo URL</label>
-        <input id="homeLogo${index}" placeholder="logos/milon.png" />
-        <label>Away Team Name</label>
-        <input id="awayName${index}" placeholder="ΚΑΛΑΜΑΤΑ" />
-        <label>Away Subtitle</label>
-        <input id="awaySubtitle${index}" placeholder="Α.Ο. 80" />
-        <label>Away Logo URL</label>
-        <input id="awayLogo${index}" placeholder="logos/kalamata.png" />
-        <label>Time</label>
-        <input id="time${index}" placeholder="18:00" />
-        <label>Date</label>
-        <input id="date${index}" placeholder="25 Οκτ" />
-        <label>Court</label>
-        <input id="court${index}" placeholder="ΚΡΟΙΣΟΣ ΠΕΡΣΗΣ" />
-        <label>Channel</label>
-        <input id="channel${index}" placeholder="ERT Sports" />
-      </div>`;
-    }
-
-    // Render 5 match forms
+<html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <title>Gameday Schedule Control Panel</title>
+    <style>
+    body { font-family:'Inter',sans-serif; background:#0f172a; color:#f8fafc; padding:40px; }
+    h1 { color:#3b82f6; margin-bottom:20px; }
+    .panel { background:#1e293b; padding:20px; border-radius:12px; max-width:900px; }
+    .match { border:1px solid #334155; padding:15px; border-radius:10px; margin-bottom:15px; }
+    label { display:block; margin-top:10px; font-weight:600; }
+    select,input { width:100%; padding:8px; margin-top:5px; border-radius:6px; border:none; background:#334155; color:#fff; }
+    button { margin-top:15px; padding:10px 20px; border:none; border-radius:8px; background:#3b82f6; color:white; font-weight:600; cursor:pointer; }
+    button:hover { background:#2563eb; }
+    pre { background:#0f172a; color:#94a3b8; padding:10px; border-radius:6px; overflow:auto; max-height:300px; }
+    </style>
+    </head>
+    <body>
+    <h1>🏐 Volleyball Gameday Schedule Editor</h1>
+    <div class="panel" id="schedulePanel"></div>
+    <button id="updateBtn">Update JSON on GitHub</button>
+    <h2>Generated JSON Preview</h2>
+    <pre id="jsonPreview">{}</pre>
+  
+    <script>
+    // === CONFIG ===
+    const GITHUB_REPO = "YOUR_USERNAME/YOUR_REPO"; // e.g., "nickkapsis/volleyball-data"
+    const GITHUB_PATH = "gameday/schedule.json";
+    const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"; // Must have repo scope
+    
+    // === TEAM LIST ===
+    const teams = [
+      "Ολυμπιακός", "Παναθηναϊκός", "ΠΑΟΚ", "Μίλων", "Κηφισιά",
+      "Φοίνικας Σύρου", "Φλοίσβος", "ΟΦΗ", "Πανιώνιος", "Καλαμάτα"
+    ];
+    
+    // === BUILD UI ===
+    const panel = document.getElementById('schedulePanel');
     for (let i = 0; i < 5; i++) {
-      matchesContainer.innerHTML += createMatchForm(i);
+      const div = document.createElement('div');
+      div.className = 'match';
+      div.innerHTML = `
+        <h3>Match ${i+1}</h3>
+        <label>Home Team</label>
+        <select class="home">
+          <option value="">Select Home Team</option>
+          ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
+        <label>Away Team</label>
+        <select class="away">
+          <option value="">Select Away Team</option>
+          ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+        </select>
+        <label>Date</label>
+        <input type="date" class="date">
+        <label>Time</label>
+        <input type="time" class="time">
+        <label>Court</label>
+        <input type="text" class="court" placeholder="e.g. Στάδιο Ειρήνης και Φιλίας">
+      `;
+      panel.appendChild(div);
     }
-
-    async function uploadToGitHub() {
-      const username = document.getElementById("username").value;
-      const repo = document.getElementById("repo").value;
-      const branch = document.getElementById("branch").value || "main";
-      const token = document.getElementById("token").value;
-
-      if (!username || !repo || !token) {
-        alert("⚠️ Please fill in your GitHub details and token.");
-        return;
-      }
-
-      // Gather data
+    
+    // === CREATE JSON ===
+    function buildJSON() {
       const matches = [];
-      for (let i = 0; i < 5; i++) {
-        matches.push({
-          home: {
-            name: document.getElementById(`homeName${i}`).value,
-            subtitle: document.getElementById(`homeSubtitle${i}`).value,
-            logo: document.getElementById(`homeLogo${i}`).value
-          },
-          away: {
-            name: document.getElementById(`awayName${i}`).value,
-            subtitle: document.getElementById(`awaySubtitle${i}`).value,
-            logo: document.getElementById(`awayLogo${i}`).value
-          },
-          time: document.getElementById(`time${i}`).value,
-          date: document.getElementById(`date${i}`).value,
-          court: document.getElementById(`court${i}`).value,
-          channel: document.getElementById(`channel${i}`).value
-        });
-      }
-
-      const data = { matches };
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(data, null, 2))));
-
-      const path = "gameday/schedule.json";
-      const apiUrl = `https://api.github.com/repos/${username}/${repo}/contents/${path}`;
-
-      // Get the existing file SHA (required for updates)
-      let sha = null;
-      try {
-        const getRes = await fetch(apiUrl, { headers: { Authorization: `token ${token}` }});
-        if (getRes.ok) {
-          const fileData = await getRes.json();
-          sha = fileData.sha;
+      document.querySelectorAll('.match').forEach(div => {
+        const home = div.querySelector('.home').value;
+        const away = div.querySelector('.away').value;
+        const date = div.querySelector('.date').value;
+        const time = div.querySelector('.time').value;
+        const court = div.querySelector('.court').value;
+        if (home && away && date && time && court) {
+          matches.push({
+            home: { name: home, subtitle: "", logo: `logos/${home}.png` },
+            away: { name: away, subtitle: "", logo: `logos/${away}.png` },
+            date, time, court
+          });
         }
-      } catch (e) {
-        console.warn("No existing file found, creating new one.");
+      });
+      return { matches };
+    }
+    
+    // === SHOW JSON PREVIEW ===
+    function updatePreview() {
+      const json = buildJSON();
+      document.getElementById('jsonPreview').textContent = JSON.stringify(json, null, 2);
+    }
+    document.querySelectorAll('select,input').forEach(el => el.addEventListener('input', updatePreview));
+    
+    // === GITHUB UPLOAD ===
+    async function updateGithubFile() {
+      const json = buildJSON();
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
+      const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+    
+      // Get existing file SHA if it exists
+      let sha = null;
+      const getRes = await fetch(url, {
+        headers: { Authorization: `token ${GITHUB_TOKEN}` }
+      });
+      if (getRes.status === 200) {
+        const data = await getRes.json();
+        sha = data.sha;
       }
-
-      // Upload new file
-      const res = await fetch(apiUrl, {
+    
+      const res = await fetch(url, {
         method: "PUT",
         headers: {
-          "Authorization": `token ${token}`,
+          "Authorization": `token ${GITHUB_TOKEN}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          message: "Update schedule.json",
-          content: content,
-          sha: sha,
-          branch: branch
+          message: "Update gameday schedule.json",
+          content,
+          sha
         })
       });
-
-      if (res.ok) {
-        alert("✅ Schedule updated successfully on GitHub!");
-      } else {
-        const err = await res.json();
-        alert("❌ Upload failed: " + err.message);
-        console.error(err);
-      }
+    
+      if (res.ok) alert("✅ schedule.json successfully updated on GitHub!");
+      else alert("❌ Failed to update file. Check console for details.");
+      console.log(await res.json());
     }
-  </script>
-</body>
+    
+    document.getElementById('updateBtn').addEventListener('click', updateGithubFile);
+    </script>
+  </body>
 </html>
