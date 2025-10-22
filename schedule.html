@@ -30,7 +30,7 @@
         @keyframes moveLine4 {0%{right:-300px;opacity:0;}15%{opacity:1;}85%{opacity:1;}100%{right:1920px;opacity:0;}}
         @keyframes moveLine5 {0%{right:-450px;opacity:0;}15%{opacity:1;}85%{opacity:1;}100%{right:1920px;opacity:0;}}
 
-        .title { position:absolute; top:80px; left:50%; transform:translateX(-50%);
+        .title { position:absolute; top:60px; left:50%; transform:translateX(-50%);
             font-size:48px; font-weight:900;
             background:linear-gradient(135deg, #f8fafc 0%, #3b82f6 100%);
             background-clip:text; -webkit-background-clip:text; -webkit-text-fill-color:transparent;
@@ -114,9 +114,9 @@
         .team-name { font-weight:700; font-size:24px; margin-bottom:3px; text-shadow:2px 2px 4px rgba(0,0,0,0.5); }
         .team-subtitle { font-size:16px; opacity:0.9; text-shadow:1px 1px 2px rgba(0,0,0,0.5); }
 
+        .game-time { font-size:32px; font-weight:800; color:#fff; text-shadow:0 0 15px rgba(59,130,246,0.8); margin-bottom:3px; }
         .vs-section { display:flex; flex-direction:column; align-items:center; }
         .vs-text { font-size:32px; font-weight:900; color:#fff; text-shadow:0 0 20px rgba(59,130,246,0.8); margin-bottom:8px; }
-        .game-time { font-size:32px; font-weight:800; color:#fff; text-shadow:0 0 15px rgba(59,130,246,0.8); margin-bottom:3px; }
         .game-date { font-size:14px; font-weight:600; color:#fff; opacity:1; }
 
         .court-info { text-align:center; color:#fff; }
@@ -125,7 +125,7 @@
 
         /* League Logo */
         .league-logo {
-            position:absolute; bottom:50px; left:45%; transform:translateX(-50%);
+            position:absolute; bottom:30px; left:45%; transform:translateX(-50%);
             width:180px; height:180px; z-index:20;
             opacity:0; transform:translateX(-50%) scale(0.3);
             animation:logoZoomGlow 2s ease-out 4s forwards;
@@ -402,16 +402,16 @@
             row.innerHTML = `
               <div class="home-team">
                 <div class="team-logo"><img src="${match.home.logo}" alt="${match.home.name}"></div>
-                <div class="team-info"><div class="team-name">${match.home.name}</div><div class="team-subtitle">${match.home.subtitle}</div></div>
+                <div class="team-info"><div class="team-name">${match.home.name}</div><div class="team-subtitle">${match.home.subtitle|| ''}</div></div>
               </div>
               <div class="vs-section">
-                <div class="vs-text">VS</div>
                 <div class="game-time">${match.time}</div>
+                <div class="vs-text">VS</div>
                 <div class="game-date">${match.date}</div>
                 <div class="game-channel">${match.channel || ''}</div>
               </div>
               <div class="away-team">
-                <div class="team-info"><div class="team-name">${match.away.name}</div><div class="team-subtitle">${match.away.subtitle}</div></div>
+                <div class="team-info"><div class="team-name">${match.away.name}</div><div class="team-subtitle">${match.away.subtitle|| ''}</div></div>
                 <div class="team-logo"><img src="${match.away.logo}" alt="${match.away.name}"></div>
               </div>
               <div class="court-info">
