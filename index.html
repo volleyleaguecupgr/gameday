@@ -94,10 +94,18 @@ pre {
 <pre id="jsonPreview">{}</pre>
 
 <script>
-// === TEAM LIST ===
+// === TEAM LIST & LOGO KEYS ===
 const teams = [
-  "ΠΑΟΚ", "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", "ΑΟΝΣ ΜΙΛΩΝ", 
-  "ΑΟ ΚΑΛΑΜΑΤΑ 80 AFFIDEA", "ΠΑΝΙΩΝΙΟΣ", "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", "ΟΦΗ", "ΑΟΠ ΚΗΦΙΣΙΑΣ"
+  { name: "ΠΑΟΚ", key: "paok" },
+  { name: "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", key: "foinikas" },
+  { name: "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", key: "panathinaikos" },
+  { name: "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", key: "floisvos" },
+  { name: "ΑΟΝΣ ΜΙΛΩΝ", key: "milon" },
+  { name: "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA", key: "kalamata" },
+  { name: "ΠΑΝΙΩΝΙΟΣ", key: "panionios" },
+  { name: "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", key: "olympiakos" },
+  { name: "ΟΦΗ", key: "ofi" },
+  { name: "ΑΟΠ ΚΗΦΙΣΙΑΣ", key: "kifisia" }
 ];
 
 // === BUILD 5 MATCH BOXES ===
@@ -110,12 +118,12 @@ for (let i = 0; i < 5; i++) {
     <label>Home Team</label>
     <select class="home">
       <option value="">Select Home Team</option>
-      ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+      ${teams.map(t => `<option value="${t.key}">${t.name}</option>`).join('')}
     </select>
     <label>Away Team</label>
     <select class="away">
       <option value="">Select Away Team</option>
-      ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+      ${teams.map(t => `<option value="${t.key}">${t.name}</option>`).join('')}
     </select>
     <label>Date (dd/mm)</label>
     <input type="text" class="date" placeholder="e.g. 05/11">
@@ -131,16 +139,19 @@ for (let i = 0; i < 5; i++) {
 function buildJSON() {
   const matches = [];
   document.querySelectorAll('.match').forEach(div => {
-    const home = div.querySelector('.home').value.trim();
-    const away = div.querySelector('.away').value.trim();
+    const homeKey = div.querySelector('.home').value;
+    const awayKey = div.querySelector('.away').value;
     const date = div.querySelector('.date').value.trim();
     const time = div.querySelector('.time').value.trim();
     const court = div.querySelector('.court').value.trim();
 
-    if (home && away && date && time && court) {
+    const homeTeam = teams.find(t => t.key === homeKey);
+    const awayTeam = teams.find(t => t.key === awayKey);
+
+    if (homeTeam && awayTeam && date && time && court) {
       matches.push({
-        home: { name: home, subtitle: "", logo: `logos/${home}.png` },
-        away: { name: away, subtitle: "", logo: `logos/${away}.png` },
+        home: { name: homeTeam.name, logo: `logos/${homeTeam.key}.png` },
+        away: { name: awayTeam.name, logo: `logos/${awayTeam.key}.png` },
         date, time, court
       });
     }
@@ -173,7 +184,7 @@ async function updateGithubFile() {
   }
 
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
-  const path = "gameday/schedule.json"; // 👈 fixed path inside 'gameday' folder
+  const path = "gameday/schedule.json"; // fixed path
   const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
 
   let sha = null;
