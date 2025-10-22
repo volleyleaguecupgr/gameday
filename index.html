@@ -1,128 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-    <meta charset="UTF-8">
-    <title>Gameday Schedule Control Panel</title>
-    <style>
-    body { font-family:'Inter',sans-serif; background:#0f172a; color:#f8fafc; padding:40px; }
-    h1 { color:#3b82f6; margin-bottom:20px; }
-    .panel { background:#1e293b; padding:20px; border-radius:12px; max-width:900px; }
-    .match { border:1px solid #334155; padding:15px; border-radius:10px; margin-bottom:15px; }
-    label { display:block; margin-top:10px; font-weight:600; }
-    select,input { width:100%; padding:8px; margin-top:5px; border-radius:6px; border:none; background:#334155; color:#fff; }
-    button { margin-top:15px; padding:10px 20px; border:none; border-radius:8px; background:#3b82f6; color:white; font-weight:600; cursor:pointer; }
-    button:hover { background:#2563eb; }
-    pre { background:#0f172a; color:#94a3b8; padding:10px; border-radius:6px; overflow:auto; max-height:300px; }
-    </style>
-    </head>
-    <body>
-    <h1>🏐 Volleyball Gameday Schedule Editor</h1>
-    <div class="panel" id="schedulePanel"></div>
-    <button id="updateBtn">Update JSON on GitHub</button>
-    <h2>Generated JSON Preview</h2>
-    <pre id="jsonPreview">{}</pre>
-  
-    <script>
-    // === CONFIG ===
-    const GITHUB_REPO = "YOUR_USERNAME/YOUR_REPO"; // e.g., "nickkapsis/volleyball-data"
-    const GITHUB_PATH = "gameday/schedule.json";
-    const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"; // Must have repo scope
-    
-    // === TEAM LIST ===
-    const teams = [
-      "Ολυμπιακός", "Παναθηναϊκός", "ΠΑΟΚ", "Μίλων", "Κηφισιά",
-      "Φοίνικας Σύρου", "Φλοίσβος", "ΟΦΗ", "Πανιώνιος", "Καλαμάτα"
-    ];
-    
-    // === BUILD UI ===
-    const panel = document.getElementById('schedulePanel');
-    for (let i = 0; i < 5; i++) {
-      const div = document.createElement('div');
-      div.className = 'match';
-      div.innerHTML = `
-        <h3>Match ${i+1}</h3>
-        <label>Home Team</label>
-        <select class="home">
-          <option value="">Select Home Team</option>
-          ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
-        </select>
-        <label>Away Team</label>
-        <select class="away">
-          <option value="">Select Away Team</option>
-          ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
-        </select>
-        <label>Date</label>
-        <input type="date" class="date">
-        <label>Time</label>
-        <input type="time" class="time">
-        <label>Court</label>
-        <input type="text" class="court" placeholder="e.g. Στάδιο Ειρήνης και Φιλίας">
-      `;
-      panel.appendChild(div);
-    }
-    
-    // === CREATE JSON ===
-    function buildJSON() {
-      const matches = [];
-      document.querySelectorAll('.match').forEach(div => {
-        const home = div.querySelector('.home').value;
-        const away = div.querySelector('.away').value;
-        const date = div.querySelector('.date').value;
-        const time = div.querySelector('.time').value;
-        const court = div.querySelector('.court').value;
-        if (home && away && date && time && court) {
-          matches.push({
-            home: { name: home, subtitle: "", logo: `logos/${home}.png` },
-            away: { name: away, subtitle: "", logo: `logos/${away}.png` },
-            date, time, court
-          });
-        }
+<head>
+<meta charset="UTF-8">
+<title>Volleyball Gameday Schedule Control Panel</title>
+<style>
+body { font-family:'Inter',sans-serif; background:#0f172a; color:#f8fafc; padding:40px; }
+h1 { color:#3b82f6; margin-bottom:20px; }
+.panel { background:#1e293b; padding:20px; border-radius:12px; max-width:900px; }
+.match { border:1px solid #334155; padding:15px; border-radius:10px; margin-bottom:15px; }
+label { display:block; margin-top:10px; font-weight:600; }
+select,input { width:100%; padding:8px; margin-top:5px; border-radius:6px; border:none; background:#334155; color:#fff; }
+button { margin-top:15px; padding:10px 20px; border:none; border-radius:8px; background:#3b82f6; color:white; font-weight:600; cursor:pointer; }
+button:hover { background:#2563eb; }
+pre { background:#0f172a; color:#94a3b8; padding:10px; border-radius:6px; overflow:auto; max-height:300px; }
+</style>
+</head>
+<body>
+<h1>🏐 Volleyball Gameday Schedule Editor</h1>
+<div class="panel" id="schedulePanel"></div>
+<button id="updateBtn">Update JSON on GitHub</button>
+<h2>Generated JSON Preview</h2>
+<pre id="jsonPreview">{}</pre>
+
+<script>
+// === CONFIG ===
+const GITHUB_REPO = "YOUR_USERNAME/YOUR_REPO"; // e.g. "nickkapsis/volleyball-data"
+const GITHUB_PATH = "gameday/schedule.json";
+const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"; // Must have 'repo' scope
+
+// === TEAM LIST ===
+const teams = [
+     "ΠΑΟΚ", "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", "ΑΟΝΣ ΜΙΛΩΝ", "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA", "ΠΑΝΙΩΝΙΟΣ", 
+     "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", "ΟΦΗ", "ΑΟΠ ΚΗΦΙΣΙΑΣ"
+];
+
+// === BUILD 5 MATCH BOXES ===
+const panel = document.getElementById('schedulePanel');
+for (let i = 0; i < 5; i++) {
+  const div = document.createElement('div');
+  div.className = 'match';
+  div.innerHTML = `
+    <h3>Match ${i+1}</h3>
+    <label>Home Team</label>
+    <select class="home">
+      <option value="">Select Home Team</option>
+      ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+    </select>
+    <label>Away Team</label>
+    <select class="away">
+      <option value="">Select Away Team</option>
+      ${teams.map(t => `<option value="${t}">${t}</option>`).join('')}
+    </select>
+    <label>Date (dd/mm)</label>
+    <input type="text" class="date" placeholder="e.g. 05/11">
+    <label>Time (hh:mm)</label>
+    <input type="text" class="time" placeholder="e.g. 19:30">
+    <label>Court</label>
+    <input type="text" class="court" placeholder="e.g. Στάδιο Ειρήνης και Φιλίας">
+  `;
+  panel.appendChild(div);
+}
+
+// === BUILD JSON ===
+function buildJSON() {
+  const matches = [];
+  document.querySelectorAll('.match').forEach(div => {
+    const home = div.querySelector('.home').value.trim();
+    const away = div.querySelector('.away').value.trim();
+    const date = div.querySelector('.date').value.trim();
+    const time = div.querySelector('.time').value.trim();
+    const court = div.querySelector('.court').value.trim();
+
+    if (home && away && date && time && court) {
+      matches.push({
+        home: { name: home, subtitle: "", logo: `logos/${home}.png` },
+        away: { name: away, subtitle: "", logo: `logos/${away}.png` },
+        date, time, court
       });
-      return { matches };
     }
-    
-    // === SHOW JSON PREVIEW ===
-    function updatePreview() {
-      const json = buildJSON();
-      document.getElementById('jsonPreview').textContent = JSON.stringify(json, null, 2);
-    }
-    document.querySelectorAll('select,input').forEach(el => el.addEventListener('input', updatePreview));
-    
-    // === GITHUB UPLOAD ===
-    async function updateGithubFile() {
-      const json = buildJSON();
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
-      const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
-    
-      // Get existing file SHA if it exists
-      let sha = null;
-      const getRes = await fetch(url, {
-        headers: { Authorization: `token ${GITHUB_TOKEN}` }
-      });
-      if (getRes.status === 200) {
-        const data = await getRes.json();
-        sha = data.sha;
-      }
-    
-      const res = await fetch(url, {
-        method: "PUT",
-        headers: {
-          "Authorization": `token ${GITHUB_TOKEN}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: "Update gameday schedule.json",
-          content,
-          sha
-        })
-      });
-    
-      if (res.ok) alert("✅ schedule.json successfully updated on GitHub!");
-      else alert("❌ Failed to update file. Check console for details.");
-      console.log(await res.json());
-    }
-    
-    document.getElementById('updateBtn').addEventListener('click', updateGithubFile);
-    </script>
-  </body>
+  });
+  return { matches };
+}
+
+// === PREVIEW JSON ===
+function updatePreview() {
+  const json = buildJSON();
+  document.getElementById('jsonPreview').textContent = JSON.stringify(json, null, 2);
+}
+document.querySelectorAll('select,input').forEach(el => el.addEventListener('input', updatePreview));
+
+// === GITHUB UPLOAD ===
+async function updateGithubFile() {
+  const json = buildJSON();
+  if (!json.matches.length) return alert("⚠️ Please fill in at least one complete match before uploading.");
+
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
+  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+
+  let sha = null;
+  const getRes = await fetch(url, {
+    headers: { Authorization: `token ${GITHUB_TOKEN}` }
+  });
+  if (getRes.status === 200) {
+    const data = await getRes.json();
+    sha = data.sha;
+  }
+
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      "Authorization": `token ${GITHUB_TOKEN}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: "Update gameday schedule.json",
+      content,
+      sha
+    })
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    alert("✅ schedule.json successfully updated on GitHub!");
+  } else {
+    console.error(data);
+    alert("❌ Failed to update file. Check console for details.");
+  }
+}
+
+document.getElementById('updateBtn').addEventListener('click', updateGithubFile);
+</script>
+</body>
 </html>
