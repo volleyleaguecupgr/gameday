@@ -2,36 +2,102 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Volleyball Gameday Schedule Control Panel</title>
+<title>🏐 Volleyball Gameday Schedule Control Panel</title>
 <style>
-body { font-family:'Inter',sans-serif; background:#0f172a; color:#f8fafc; padding:40px; }
-h1 { color:#3b82f6; margin-bottom:20px; }
-.panel { background:#1e293b; padding:20px; border-radius:12px; max-width:900px; }
-.match { border:1px solid #334155; padding:15px; border-radius:10px; margin-bottom:15px; }
-label { display:block; margin-top:10px; font-weight:600; }
-select,input { width:100%; padding:8px; margin-top:5px; border-radius:6px; border:none; background:#334155; color:#fff; }
-button { margin-top:15px; padding:10px 20px; border:none; border-radius:8px; background:#3b82f6; color:white; font-weight:600; cursor:pointer; }
-button:hover { background:#2563eb; }
-pre { background:#0f172a; color:#94a3b8; padding:10px; border-radius:6px; overflow:auto; max-height:300px; }
+body {
+  font-family:'Inter',sans-serif;
+  background:#0f172a;
+  color:#f8fafc;
+  padding:40px;
+}
+h1 {
+  color:#3b82f6;
+  margin-bottom:20px;
+}
+.panel {
+  background:#1e293b;
+  padding:20px;
+  border-radius:12px;
+  max-width:900px;
+}
+.match {
+  border:1px solid #334155;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:15px;
+}
+label {
+  display:block;
+  margin-top:10px;
+  font-weight:600;
+}
+select,input {
+  width:100%;
+  padding:8px;
+  margin-top:5px;
+  border-radius:6px;
+  border:none;
+  background:#334155;
+  color:#fff;
+}
+button {
+  margin-top:15px;
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#3b82f6;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+button:hover {
+  background:#2563eb;
+}
+pre {
+  background:#0f172a;
+  color:#94a3b8;
+  padding:10px;
+  border-radius:6px;
+  overflow:auto;
+  max-height:300px;
+}
+.credentials {
+  background:#1e293b;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:20px;
+  border:1px solid #334155;
+}
+.credentials h3 {
+  margin-bottom:10px;
+  color:#60a5fa;
+}
 </style>
 </head>
 <body>
 <h1>🏐 Volleyball Gameday Schedule Editor</h1>
+
+<div class="credentials">
+  <h3>🔐 GitHub Connection</h3>
+  <label>GitHub Username</label>
+  <input type="text" id="username" placeholder="e.g. nickkapsis">
+  <label>Repository Name</label>
+  <input type="text" id="repo" placeholder="e.g. volleyball-data">
+  <label>Personal Access Token</label>
+  <input type="password" id="token" placeholder="GitHub PAT (repo scope)">
+</div>
+
 <div class="panel" id="schedulePanel"></div>
 <button id="updateBtn">Update JSON on GitHub</button>
+
 <h2>Generated JSON Preview</h2>
 <pre id="jsonPreview">{}</pre>
 
 <script>
-// === CONFIG ===
-const GITHUB_REPO = "YOUR_USERNAME/YOUR_REPO"; // e.g. "nickkapsis/volleyball-data"
-const GITHUB_PATH = "gameday/schedule.json";
-const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"; // Must have 'repo' scope
-
 // === TEAM LIST ===
 const teams = [
-     "ΠΑΟΚ", "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", "ΑΟΝΣ ΜΙΛΩΝ", "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA", "ΠΑΝΙΩΝΙΟΣ", 
-     "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", "ΟΦΗ", "ΑΟΠ ΚΗΦΙΣΙΑΣ"
+  "ΠΑΟΚ", "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", "ΑΟΝΣ ΜΙΛΩΝ", 
+  "ΑΟ ΚΑΛΑΜΑΤΑ 80 AFFIDEA", "ΠΑΝΙΩΝΙΟΣ", "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", "ΟΦΗ", "ΑΟΠ ΚΗΦΙΣΙΑΣ"
 ];
 
 // === BUILD 5 MATCH BOXES ===
@@ -91,15 +157,28 @@ document.querySelectorAll('select,input').forEach(el => el.addEventListener('inp
 
 // === GITHUB UPLOAD ===
 async function updateGithubFile() {
+  const user = document.getElementById('username').value.trim();
+  const repo = document.getElementById('repo').value.trim();
+  const token = document.getElementById('token').value.trim();
+
+  if (!user || !repo || !token) {
+    alert("⚠️ Please fill in your GitHub username, repo name, and token first.");
+    return;
+  }
+
   const json = buildJSON();
-  if (!json.matches.length) return alert("⚠️ Please fill in at least one complete match before uploading.");
+  if (!json.matches.length) {
+    alert("⚠️ Please fill in at least one complete match before uploading.");
+    return;
+  }
 
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
-  const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
+  const path = "gameday/schedule.json"; // 👈 fixed path inside 'gameday' folder
+  const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
 
   let sha = null;
   const getRes = await fetch(url, {
-    headers: { Authorization: `token ${GITHUB_TOKEN}` }
+    headers: { Authorization: `token ${token}` }
   });
   if (getRes.status === 200) {
     const data = await getRes.json();
@@ -109,11 +188,11 @@ async function updateGithubFile() {
   const res = await fetch(url, {
     method: "PUT",
     headers: {
-      "Authorization": `token ${GITHUB_TOKEN}`,
+      "Authorization": `token ${token}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      message: "Update gameday schedule.json",
+      message: "Update gameday/schedule.json",
       content,
       sha
     })
@@ -121,7 +200,7 @@ async function updateGithubFile() {
 
   const data = await res.json();
   if (res.ok) {
-    alert("✅ schedule.json successfully updated on GitHub!");
+    alert("✅ gameday/schedule.json successfully updated on GitHub!");
   } else {
     console.error(data);
     alert("❌ Failed to update file. Check console for details.");
