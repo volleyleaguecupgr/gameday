@@ -3,13 +3,11 @@
     {
       "home": {
         "name": "ΠΑΟΚ",
-        "subtitle": "",
-        "logo": "logos/ΠΑΟΚ.png"
+        "logo": "logos/paok.png"
       },
       "away": {
         "name": "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ",
-        "subtitle": "",
-        "logo": "logos/ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ.png"
+        "logo": "logos/foinikas.png"
       },
       "date": "24/10",
       "time": "19:00",
@@ -18,13 +16,11 @@
     {
       "home": {
         "name": "ΠΑΝΑΘΗΝΑΪΚΟΣ AO",
-        "subtitle": "",
-        "logo": "logos/ΠΑΝΑΘΗΝΑΪΚΟΣ AO.png"
+        "logo": "logos/panathinaikos.png"
       },
       "away": {
         "name": "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON",
-        "subtitle": "",
-        "logo": "logos/ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON.png"
+        "logo": "logos/floisvos.png"
       },
       "date": "25/10",
       "time": "20:30",
@@ -33,13 +29,11 @@
     {
       "home": {
         "name": "ΑΟΝΣ ΜΙΛΩΝ",
-        "subtitle": "",
-        "logo": "logos/ΑΟΝΣ ΜΙΛΩΝ.png"
+        "logo": "logos/milon.png"
       },
       "away": {
-        "name": "ΑΟ ΚΑΛΑΜΑΤΑ 80 AFFIDEA",
-        "subtitle": "",
-        "logo": "logos/ΑΟ ΚΑΛΑΜΑΤΑ 80 AFFIDEA.png"
+        "name": "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA",
+        "logo": "logos/kalamata.png"
       },
       "date": "26/10",
       "time": "18:30",
@@ -48,13 +42,11 @@
     {
       "home": {
         "name": "ΠΑΝΙΩΝΙΟΣ",
-        "subtitle": "",
-        "logo": "logos/ΠΑΝΙΩΝΙΟΣ.png"
+        "logo": "logos/panionios.png"
       },
       "away": {
         "name": "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ",
-        "subtitle": "",
-        "logo": "logos/ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ.png"
+        "logo": "logos/olympiakos.png"
       },
       "date": "26/10",
       "time": "19:45",
@@ -63,13 +55,11 @@
     {
       "home": {
         "name": "ΟΦΗ",
-        "subtitle": "",
-        "logo": "logos/ΟΦΗ.png"
+        "logo": "logos/ofi.png"
       },
       "away": {
         "name": "ΑΟΠ ΚΗΦΙΣΙΑΣ",
-        "subtitle": "",
-        "logo": "logos/ΑΟΠ ΚΗΦΙΣΙΑΣ.png"
+        "logo": "logos/kifisia.png"
       },
       "date": "12/11",
       "time": "17:00",
