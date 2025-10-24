@@ -94,18 +94,18 @@ pre {
 <pre id="jsonPreview">{}</pre>
 
 <script>
-// === TEAM LIST & LOGO KEYS ===
+// === TEAM LIST WITH COLORS ===
 const teams = [
-  { name: "ΠΑΟΚ", key: "paok" },
-  { name: "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", key: "foinikas" },
-  { name: "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", key: "panathinaikos" },
-  { name: "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", key: "floisvos" },
-  { name: "ΑΟΝΣ ΜΙΛΩΝ", key: "milon" },
-  { name: "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA", key: "kalamata" },
-  { name: "ΠΑΝΙΩΝΙΟΣ", key: "panionios" },
-  { name: "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", key: "olympiakos" },
-  { name: "ΟΦΗ", key: "ofi" },
-  { name: "ΑΟΠ ΚΗΦΙΣΙΑΣ", key: "kifisia" }
+  { name: "ΠΑΟΚ", key: "paok", color: "#1a1a1a" },
+  { name: "ΑΟ ΦΟΙΝΙΚΑΣ ΣΥΡΟΥ", key: "foinikas", color: "#FF4500" },
+  { name: "ΠΑΝΑΘΗΝΑΪΚΟΣ AO", key: "panathinaikos", color: "#16a34a" },
+  { name: "ΑΟ ΦΛΟΙΣΒΟΣ MEMBERS PARON", key: "floisvos", color: "#1E90FF" },
+  { name: "ΑΟΝΣ ΜΙΛΩΝ", key: "milon", color: "#228B22" },
+  { name: "ΑΟ ΚΑΛΑΜΑΤΑ '80 AFFIDEA", key: "kalamata", color: "#32CD32" },
+  { name: "ΠΑΝΙΩΝΙΟΣ", key: "panionios", color: "#DC143C" },
+  { name: "ΟΛΥΜΠΙΑΚΟΣ ΣΦΠ OΝΕΧ", key: "olympiakos", color: "#dc1414" },
+  { name: "ΟΦΗ", key: "ofi", color: "#2c2c2c" },
+  { name: "ΑΟΠ ΚΗΦΙΣΙΑΣ", key: "kifisia", color: "#4169E1" }
 ];
 
 // === BUILD 5 MATCH BOXES ===
@@ -150,8 +150,16 @@ function buildJSON() {
 
     if (homeTeam && awayTeam && date && time && court) {
       matches.push({
-        home: { name: homeTeam.name, logo: `logos/${homeTeam.key}.png` },
-        away: { name: awayTeam.name, logo: `logos/${awayTeam.key}.png` },
+        home: { 
+          name: homeTeam.name, 
+          logo: `logos/${homeTeam.key}.png`,
+          color: homeTeam.color 
+        },
+        away: { 
+          name: awayTeam.name, 
+          logo: `logos/${awayTeam.key}.png`,
+          color: awayTeam.color
+        },
         date, time, court
       });
     }
@@ -184,7 +192,7 @@ async function updateGithubFile() {
   }
 
   const content = btoa(unescape(encodeURIComponent(JSON.stringify(json, null, 2))));
-  const path = "gameday/schedule.json"; // fixed path
+  const path = "gameday/schedule.json";
   const url = `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
 
   let sha = null;
